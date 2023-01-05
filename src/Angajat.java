@@ -1,7 +1,7 @@
 import java.io.Serializable;
 
 public class Angajat implements Login, Serializable {
-
+    private static final long serialVersionUID = 6529685098267757690L;
     private String nume, prenume, email, parola;
     private boolean esteAngajat;
     public Angajat (String nume, String prenume, String email, String parola){

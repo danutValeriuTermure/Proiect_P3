@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class GUILogin extends JFrame implements Serializable {
 
@@ -80,15 +81,81 @@ public class GUILogin extends JFrame implements Serializable {
         login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String email = tfEmail.getText();
+                String parola = tfParola.getText();
+                try {
+                    boolean gasit = false;
+                    String copieEmail = "", copieParola = "";
+                    Scanner myReaderClienti = new Scanner(clienti);
+                    while (myReaderClienti.hasNextLine()) {
+                        String data = myReaderClienti.nextLine();
+                        String[] splited = data.split(" ");
+                        if (splited[0].equals(email)){
+                            copieParola = splited[1];
+                            copieEmail = splited[0];
+                            gasit = true;
+                        }
+                    }
+
+                    if (gasit == true){
+                        if (copieParola.equals(parola)){
+                            JOptionPane.showMessageDialog(null, "Logat");
+                        }
+                        else{
+                            JOptionPane.showMessageDialog(null, "Parola gresita");
+                        }
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(null, "User gresit");
+                    }
+
+                    myReaderClienti.close();
+                } catch (FileNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                try {
+                    boolean gasit = false;
+                    String copieEmail = "", copieParola = "";
+                    Scanner myReaderAngajati = new Scanner(angajati);
+                    while (myReaderAngajati.hasNextLine()) {
+                        String data = myReaderAngajati.nextLine();
+                        String[] splited = data.split(" ");
+                        if (splited[0].equals(email)){
+                            copieParola = splited[1];
+                            copieEmail = splited[0];
+                            gasit = true;
+                        }
+                    }
+
+                    if (gasit == true){
+                        if (copieParola.equals(parola)){
+                            JOptionPane.showMessageDialog(null, "Logat");
+                        }
+                        else{
+                            JOptionPane.showMessageDialog(null, "Parola gresita");
+                        }
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(null, "User gresit");
+                    }
+
+                    myReaderAngajati.close();
+                } catch (FileNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                /**
                 try {
                     if (clienti.exists())
-                        DeserializareClienti(clienti, listaClienti);
+                        DeserializareClienti(clienti);
                     if (angajati.exists())
-                        DeserializareAngajati(angajati, listaAngajati);
+                        DeserializareAngajati(angajati);
                 }
-                catch(IOException|ClassNotFoundException ex){
+                catch(IOException|ClassNotFoundException|ClassCastException ex){
                     ex.printStackTrace();
                 }
+
 
                 String email = tfEmail.getText();
                 String parola = tfParola.getText();
@@ -109,6 +176,7 @@ public class GUILogin extends JFrame implements Serializable {
                         }
                     }
                 }
+                 */
             }
         });
     }
@@ -122,10 +190,14 @@ public class GUILogin extends JFrame implements Serializable {
     }
 
 
-    public void DeserializareClienti(File f, List<Client> lista) throws IOException, ClassNotFoundException{
+    public void DeserializareClienti(File f) throws IOException, ClassNotFoundException{
+        System.out.println("1");
         FileInputStream fis = new FileInputStream(f);
+        System.out.println("2");
         ObjectInputStream ois = new ObjectInputStream(fis);
-        java.util.List<Object> temp = (List<Object>) ois.readObject();
+        System.out.println("3");
+        List<Object> temp = (List<Object>) ois.readObject();
+        System.out.println("4");
         ois.close();
         fis.close();
         for (Object o : temp){
@@ -133,7 +205,7 @@ public class GUILogin extends JFrame implements Serializable {
         }
     }
 
-    public void DeserializareAngajati(File f, List<Angajat> lista) throws IOException, ClassNotFoundException{
+    public void DeserializareAngajati(File f) throws IOException, ClassNotFoundException{
         FileInputStream fis = new FileInputStream(f);
         ObjectInputStream ois = new ObjectInputStream(fis);
         java.util.List<Object> temp = (List<Object>) ois.readObject();

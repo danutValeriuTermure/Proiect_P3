@@ -1,7 +1,7 @@
 import java.io.Serializable;
 
 public class Client implements Login, Serializable {
-
+    private static final long serialVersionUID = -7656407175460033336L;
     private String nume, prenume, email, parola;
     private boolean esteClient;
 

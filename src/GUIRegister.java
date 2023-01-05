@@ -3,7 +3,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class GUIRegister extends JFrame implements Serializable {
 
@@ -121,23 +123,87 @@ public class GUIRegister extends JFrame implements Serializable {
                     String prenumeClient = tfPrenume.getText();
                     String emailClient = tfEmail.getText();
                     String parolaClient = tfParola.getText();
+                    String deAdaugat = emailClient + " " + parolaClient + " " + numeClient + " " + prenumeClient;
+
+                    List<String> lClienti = new ArrayList<>();
+                    try {
+                        Scanner citeste = new Scanner(clienti);
+                        while(citeste.hasNextLine()){
+                            String linie = citeste.nextLine();
+                            lClienti.add(linie);
+                        }
+                        citeste.close();
+                    } catch (FileNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                    clienti.delete();
+                    lClienti.add(deAdaugat);
+
+                    try {
+                        FileOutputStream fos = new FileOutputStream(clienti);
+                        BufferedWriter scrie = new BufferedWriter(new OutputStreamWriter(fos));
+                        for (String s : lClienti){
+                            scrie.write(s);
+                            scrie.newLine();
+                        }
+                        scrie.close();
+
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                    /**
                     client = new Client(numeClient,prenumeClient,emailClient,parolaClient);
                     try {
                         SerializareClenti(clienti);
                     } catch (IOException er) {
                         er.printStackTrace();
                     }
+                     */
                 }else{
                     String numeAngajat = tfNume.getText();
                     String prenumeAngajat = tfPrenume.getText();
                     String emailAngajat = tfEmail.getText();
                     String parolaAngajat = tfParola.getText();
+                    String deAdaugat = emailAngajat + " " + parolaAngajat + " " + numeAngajat + " " + prenumeAngajat;
+
+                    List<String> lAngajati = new ArrayList<>();
+                    try {
+                        Scanner citeste = new Scanner(angajati);
+                        while(citeste.hasNextLine()){
+                            String linie = citeste.nextLine();
+                            lAngajati.add(linie);
+                        }
+                        citeste.close();
+                    } catch (FileNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                    angajati.delete();
+                    lAngajati.add(deAdaugat);
+
+                    try {
+                        FileOutputStream fos = new FileOutputStream(angajati);
+                        BufferedWriter scrie = new BufferedWriter(new OutputStreamWriter(fos));
+                        for (String s : lAngajati){
+                            scrie.write(s);
+                            scrie.newLine();
+                        }
+                        scrie.close();
+
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                    /**
                     angajat = new Angajat(numeAngajat, prenumeAngajat,emailAngajat,parolaAngajat);
                     try {
                         SerializareAngajati(angajati);
                     } catch (IOException er) {
                         er.printStackTrace();
                     }
+                     */
                 }
 
 
@@ -145,6 +211,8 @@ public class GUIRegister extends JFrame implements Serializable {
         });
 
     }
+
+    /**
     public void SerializareClenti(File clienti) throws IOException {
         FileOutputStream fos = new FileOutputStream(clienti);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -160,6 +228,7 @@ public class GUIRegister extends JFrame implements Serializable {
         oos.close();
         fos.close();
     }
+     */
 
 
 
