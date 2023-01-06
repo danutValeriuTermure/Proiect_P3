@@ -23,7 +23,9 @@ public class GUIPaginaPrincipala extends JFrame {
 
     public GUIPaginaPrincipala(File clienti, File angajati){
         setTitle("Pagina principala");
-        setSize(new Dimension(980, 1880));
+        Container c = getContentPane();
+        c.setBackground(Color.magenta);
+        setSize(new Dimension(980, 800));
         setResizable(false);
         setLayout(null);
 
@@ -94,6 +96,15 @@ public class GUIPaginaPrincipala extends JFrame {
         mijlocSus.add(meniuTAV);
         mijlocSus.add(meniuG);
         add(mijlocSus);
+
+        JPanel principal = new JPanel();
+        principal.setSize(new Dimension(600, 700));
+        principal.setBounds(10, 140, 600, 700);
+
+        JScrollBar vbar = new JScrollBar(JScrollBar.VERTICAL, 30, 40, 0, 500);
+        vbar.setBounds(800, 150, 15, 400);
+        principal.add(vbar);
+        add(principal);
 
         login.addActionListener(new ActionListener() {
             @Override

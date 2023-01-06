@@ -6,6 +6,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GUIRegister extends JFrame implements Serializable {
 
@@ -22,6 +24,8 @@ public class GUIRegister extends JFrame implements Serializable {
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Register");
+        Container col = getContentPane();
+        col.setBackground(Color.magenta);
         setSize(new Dimension(500, 400));
         setResizable(false);
         setLocationRelativeTo(null);
@@ -43,7 +47,6 @@ public class GUIRegister extends JFrame implements Serializable {
         bClient.setSize(new Dimension(180, 20));
         bClient.setFont(new Font("Monaco", Font.BOLD, 12));
         bClient.setBounds(40, 50, 180, 20);
-
         bAngajat.setSize(new Dimension(180, 20));
         bAngajat.setFont(new Font("Monaco", Font.BOLD, 12));
         bAngajat.setBounds(40, 80, 180, 20);
@@ -115,44 +118,67 @@ public class GUIRegister extends JFrame implements Serializable {
         add(arataParola);
         add(register);
 
+
         register.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (bClient.isSelected()){
+                if (bClient.isSelected() && bAngajat.isSelected()){
+                    JOptionPane.showMessageDialog(null, "Selecteaza doar o varianta");
+                }
+
+                if (bClient.isSelected() && !bAngajat.isSelected()){
                     String numeClient = tfNume.getText();
                     String prenumeClient = tfPrenume.getText();
                     String emailClient = tfEmail.getText();
                     String parolaClient = tfParola.getText();
-                    String deAdaugat = emailClient + " " + parolaClient + " " + numeClient + " " + prenumeClient;
 
-                    List<String> lClienti = new ArrayList<>();
-                    try {
-                        Scanner citeste = new Scanner(clienti);
-                        while(citeste.hasNextLine()){
-                            String linie = citeste.nextLine();
-                            lClienti.add(linie);
+                    String regex = "^(.+)@(.+)$";
+                    Pattern pattern = Pattern.compile(regex);
+
+                    boolean ok = false;
+                    Matcher matcher = pattern.matcher(emailClient);
+                    if (matcher.matches() == false) {
+                        JOptionPane.showMessageDialog(null, "Email incorect");
+                    }else{
+                        if (verificareParola(parolaClient) == false){
+                            JOptionPane.showMessageDialog(null, "Parola incorect");
+                        }else {
+                            ok = true;
                         }
-                        citeste.close();
-                    } catch (FileNotFoundException ex) {
-                        throw new RuntimeException(ex);
                     }
 
-                    clienti.delete();
-                    lClienti.add(deAdaugat);
 
-                    try {
-                        FileOutputStream fos = new FileOutputStream(clienti);
-                        BufferedWriter scrie = new BufferedWriter(new OutputStreamWriter(fos));
-                        for (String s : lClienti){
-                            scrie.write(s);
-                            scrie.newLine();
+                    if (ok == true) {
+                        String deAdaugat = emailClient + " " + parolaClient + " " + numeClient + " " + prenumeClient;
+
+                        List<String> lClienti = new ArrayList<>();
+                        try {
+                            Scanner citeste = new Scanner(clienti);
+                            while (citeste.hasNextLine()) {
+                                String linie = citeste.nextLine();
+                                lClienti.add(linie);
+                            }
+                            citeste.close();
+                        } catch (FileNotFoundException ex) {
+                            throw new RuntimeException(ex);
                         }
-                        scrie.close();
 
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                        clienti.delete();
+                        lClienti.add(deAdaugat);
+
+                        try {
+                            FileOutputStream fos = new FileOutputStream(clienti);
+                            BufferedWriter scrie = new BufferedWriter(new OutputStreamWriter(fos));
+                            for (String s : lClienti) {
+                                scrie.write(s);
+                                scrie.newLine();
+                            }
+                            scrie.close();
+
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
-
                     /**
                     client = new Client(numeClient,prenumeClient,emailClient,parolaClient);
                     try {
@@ -161,41 +187,61 @@ public class GUIRegister extends JFrame implements Serializable {
                         er.printStackTrace();
                     }
                      */
-                }else{
+                }
+                if (bAngajat.isSelected()&& !bClient.isSelected()){
                     String numeAngajat = tfNume.getText();
                     String prenumeAngajat = tfPrenume.getText();
                     String emailAngajat = tfEmail.getText();
                     String parolaAngajat = tfParola.getText();
-                    String deAdaugat = emailAngajat + " " + parolaAngajat + " " + numeAngajat + " " + prenumeAngajat;
 
-                    List<String> lAngajati = new ArrayList<>();
-                    try {
-                        Scanner citeste = new Scanner(angajati);
-                        while(citeste.hasNextLine()){
-                            String linie = citeste.nextLine();
-                            lAngajati.add(linie);
+                    String regex = "^(.+)@(.+)$";
+                    Pattern pattern = Pattern.compile(regex);
+
+                    boolean ok = false;
+
+                    Matcher matcher = pattern.matcher(emailAngajat);
+                    if (matcher.matches() == false) {
+                        JOptionPane.showMessageDialog(null, "Email incorect");
+                    }else{
+                        if (verificareParola(parolaAngajat) == false){
+                            JOptionPane.showMessageDialog(null, "Parola incorect");
+                        }else {
+                            ok = true;
                         }
-                        citeste.close();
-                    } catch (FileNotFoundException ex) {
-                        throw new RuntimeException(ex);
                     }
 
-                    angajati.delete();
-                    lAngajati.add(deAdaugat);
 
-                    try {
-                        FileOutputStream fos = new FileOutputStream(angajati);
-                        BufferedWriter scrie = new BufferedWriter(new OutputStreamWriter(fos));
-                        for (String s : lAngajati){
-                            scrie.write(s);
-                            scrie.newLine();
+                    if (ok == true) {
+                        String deAdaugat = emailAngajat + " " + parolaAngajat + " " + numeAngajat + " " + prenumeAngajat;
+
+                        List<String> lAngajati = new ArrayList<>();
+                        try {
+                            Scanner citeste = new Scanner(angajati);
+                            while (citeste.hasNextLine()) {
+                                String linie = citeste.nextLine();
+                                lAngajati.add(linie);
+                            }
+                            citeste.close();
+                        } catch (FileNotFoundException ex) {
+                            throw new RuntimeException(ex);
                         }
-                        scrie.close();
 
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                        angajati.delete();
+                        lAngajati.add(deAdaugat);
+
+                        try {
+                            FileOutputStream fos = new FileOutputStream(angajati);
+                            BufferedWriter scrie = new BufferedWriter(new OutputStreamWriter(fos));
+                            for (String s : lAngajati) {
+                                scrie.write(s);
+                                scrie.newLine();
+                            }
+                            scrie.close();
+
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
-
                     /**
                     angajat = new Angajat(numeAngajat, prenumeAngajat,emailAngajat,parolaAngajat);
                     try {
@@ -210,6 +256,13 @@ public class GUIRegister extends JFrame implements Serializable {
             }
         });
 
+    }
+
+    public boolean verificareParola(String pass){
+        if (pass.length() < 8){
+            return false;
+        }
+        return true;
     }
 
     /**
