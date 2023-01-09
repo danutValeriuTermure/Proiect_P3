@@ -50,7 +50,7 @@ public class GUIPaginaPrincipala extends JFrame {
         JPanel susDreapta = new JPanel(new FlowLayout(FlowLayout.CENTER));
         susDreapta.setSize(new Dimension(420, 70));
         susDreapta.setBounds(530, 10, 420, 70);
-        login = new JButton("Login");
+        login = new JButton("LoginRelated.Login");
         login.setFont(new Font("Monaco", Font.BOLD, 15));
         login.setPreferredSize(new Dimension(100, 30));
         register = new JButton("Register");
@@ -83,10 +83,10 @@ public class GUIPaginaPrincipala extends JFrame {
         meniuCM = new JButton("Calculatoare/Monitoare");
         meniuCM.setFont(new Font("Monaco", Font.BOLD, 10));
         meniuCM.setPreferredSize(new Dimension(180, 30));
-        meniuTAV = new JButton("Televizoare/Audio/Video");
+        meniuTAV = new JButton("Televizoare/Produse.Audio/Produse.Video");
         meniuTAV.setFont(new Font("Monaco", Font.BOLD, 10));
         meniuTAV.setPreferredSize(new Dimension(180, 30));
-        meniuG = new JButton("Gaming");
+        meniuG = new JButton("Produse.Gaming");
         meniuG.setFont(new Font("Monaco", Font.BOLD, 10));
         meniuG.setPreferredSize(new Dimension(100, 30));
         mijlocSus.add(meniuL);

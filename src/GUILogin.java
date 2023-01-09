@@ -1,3 +1,6 @@
+import LoginRelated.Angajat;
+import LoginRelated.Client;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -26,7 +29,7 @@ public class GUILogin extends JFrame implements Serializable {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         Container col = getContentPane();
         col.setBackground(Color.magenta);
-        setTitle("Login");
+        setTitle("LoginRelated.Login");
         setSize(new Dimension(500, 400));
         setResizable(false);
         setLocationRelativeTo(null);
@@ -75,8 +78,8 @@ public class GUILogin extends JFrame implements Serializable {
         });
         arataParola.setBounds(70, 190, 100, 50);
 
-        bClient = new JCheckBox("Register Client");
-        bAngajat = new JCheckBox("Register Angajat");
+        bClient = new JCheckBox("Register LoginRelated.Client");
+        bAngajat = new JCheckBox("Register LoginRelated.Angajat");
 
         bClient.setSize(new Dimension(180, 20));
         bClient.setFont(new Font("Monaco", Font.BOLD, 12));
@@ -209,7 +212,7 @@ public class GUILogin extends JFrame implements Serializable {
                 String parola = tfParola.getText();
 
                 boolean okParola = true, okUser = true;
-                for (Angajat a : listaAngajati){
+                for (LoginRelated.Angajat a : listaAngajati){
                     if (a.getEmail() == email){
                         if (a.getParola() == parola) {
                             JOptionPane.showMessageDialog(null, "Logat");
@@ -217,7 +220,7 @@ public class GUILogin extends JFrame implements Serializable {
                     }
                 }
 
-                for (Client c : listaClienti){
+                for (LoginRelated.Client c : listaClienti){
                     if (c.getEmail() == email){
                         if (c.getParola() == parola) {
                             JOptionPane.showMessageDialog(null, "Logat");
@@ -240,7 +243,7 @@ public class GUILogin extends JFrame implements Serializable {
         ois.close();
         fis.close();
         for (Object o : temp){
-            listaClienti.add((Client) o);
+            listaClienti.add((LoginRelated.Client) o);
         }
     }
 
@@ -251,7 +254,7 @@ public class GUILogin extends JFrame implements Serializable {
         ois.close();
         fis.close();
         for (Object o : temp){
-            listaAngajati.add((Angajat) o);
+            listaAngajati.add((LoginRelated.Angajat) o);
         }
     }*/
 }

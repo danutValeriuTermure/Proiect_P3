@@ -1,3 +1,6 @@
+import LoginRelated.Angajat;
+import LoginRelated.Client;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -41,8 +44,8 @@ public class GUIRegister extends JFrame implements Serializable {
         susStanga.add(titlu);
         add(susStanga);
 
-        bClient = new JCheckBox("Register Client");
-        bAngajat = new JCheckBox("Register Angajat");
+        bClient = new JCheckBox("Register LoginRelated.Client");
+        bAngajat = new JCheckBox("Register LoginRelated.Angajat");
 
         bClient.setSize(new Dimension(180, 20));
         bClient.setFont(new Font("Monaco", Font.BOLD, 12));
@@ -180,7 +183,7 @@ public class GUIRegister extends JFrame implements Serializable {
                         }
                     }
                     /**
-                    client = new Client(numeClient,prenumeClient,emailClient,parolaClient);
+                    client = new LoginRelated.Client(numeClient,prenumeClient,emailClient,parolaClient);
                     try {
                         SerializareClenti(clienti);
                     } catch (IOException er) {
@@ -243,7 +246,7 @@ public class GUIRegister extends JFrame implements Serializable {
                         }
                     }
                     /**
-                    angajat = new Angajat(numeAngajat, prenumeAngajat,emailAngajat,parolaAngajat);
+                    angajat = new LoginRelated.Angajat(numeAngajat, prenumeAngajat,emailAngajat,parolaAngajat);
                     try {
                         SerializareAngajati(angajati);
                     } catch (IOException er) {

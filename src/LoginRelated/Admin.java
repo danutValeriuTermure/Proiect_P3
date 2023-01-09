@@ -1,3 +1,5 @@
+package LoginRelated;
+
 public class Admin implements Login{
     private String nume, prenume, email, parola;
     private boolean esteAdmin;

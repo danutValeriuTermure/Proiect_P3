@@ -1,3 +1,5 @@
+package LoginRelated;
+
 import java.io.Serializable;
 
 public class Angajat implements Login, Serializable {
