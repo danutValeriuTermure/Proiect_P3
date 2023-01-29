@@ -1,34 +1,23 @@
 package LoginRelated;
 
-import java.io.Serializable;
-
-public class Angajat implements Login, Serializable {
-    private static final long serialVersionUID = 6529685098267757690L;
+public class Angajat{
     private String nume, prenume, email, parola;
-    private boolean esteAngajat;
-    public Angajat (String nume, String prenume, String email, String parola){
+    private int nrLogin, id;
+    public Angajat (int id, String nume, String prenume, String email, String parola, int nrLogin){
+        this.id = id;
         this.nume = nume;
         this.prenume = prenume;
         this.email = email;
         this.parola = parola;
-    }
-    @Override
-    public void esteAdmin() {
-        esteAngajat = false;
-    }
-
-    @Override
-    public void esteAngajat() {
-        esteAngajat = true;
-    }
-
-    @Override
-    public void esteClient() {
-        esteAngajat = false;
+        this.nrLogin = nrLogin;
     }
 
     public String toString (){
-        return "Nume : " + nume + " , prenume : " + prenume + " , email : " + email + " , parola : " + parola;
+        return "ID: " + id + ", nume : " + nume + " , prenume : " + prenume + " , email : " + email + " , parola : " + parola + " , nrLogin : " + nrLogin;
+    }
+
+    public String toStringAdmin(){
+        return "ID: " + id + ", nume : " + nume + ", prenume: " + prenume;
     }
 
     public String getEmail(){
@@ -37,5 +26,8 @@ public class Angajat implements Login, Serializable {
 
     public String getParola(){
         return this.parola;
+    }
+    public int getNrLogin(){
+        return this.nrLogin;
     }
 }

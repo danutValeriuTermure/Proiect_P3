@@ -1,0 +1,233 @@
+import LoginRelated.Client;
+import Produse.Produs;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Comanda extends JFrame {
+    private JTextArea textArea;
+    private JButton button;
+    private Produs p;
+    private JTextField textField;
+    public Comanda(Connection connection, Client c){
+        setVisible(true);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Comanda");
+        setSize(new Dimension(602, 267));
+        getContentPane().setBackground(new Color(10, 38, 71));
+        setResizable(false);
+        setLocationRelativeTo(null);
+        setLayout(null);
+
+        if (c.getP1() != 0 || c.getP2() != 0 || c.getP3() != 0) {
+            String toPrint = addToTextArea(connection, c.getP1()) + '\n' + addToTextArea(connection, c.getP2()) + '\n' + addToTextArea(connection, c.getP3());
+            textArea = new JTextArea(toPrint);
+            textArea.setFont(new Font("Monaco", Font.PLAIN, 17));
+            textArea.setForeground(Color.WHITE);
+            textArea.setSize(new Dimension(568, 150));
+            textArea.setBounds(14, 14, 568, 150);
+            textArea.setBackground(new Color(44, 116, 179));
+            textArea.setOpaque(true);
+            add(textArea);
+        }
+
+        double total = suma(connection, c.getP1()) + suma(connection, c.getP2()) + suma(connection, c.getP3());
+        textField = new JTextField(Double.toString(total));
+        textField.setBounds(300, 183, 134, 35);
+        textField.setSize(134, 35);
+        textField.setFont(new Font("Monaco", Font.PLAIN, 15));
+        add(textField);
+
+        button = new JButton("Comanda");
+        button.setSize(new Dimension(134, 35));
+        button.setBounds(447, 183, 134, 35);
+        button.setFont(new Font("Monaco", Font.PLAIN, 15));
+        button.setBackground(new Color(10, 38, 71));
+        button.setForeground(Color.WHITE);
+        add(button);
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (c.getP1() == 0 && c.getP2() == 0 && c.getP3() == 0){
+                    JOptionPane.showMessageDialog(null, "Nu exista produse in cos.");
+                }else{
+                    adauga(connection, 0, "idProdus1", c.getId());
+                    adauga(connection, 0, "idProdus2", c.getId());
+                    adauga(connection, 0, "idProdus3", c.getId());
+                    dispose();
+                    setVisible(false);
+                    JOptionPane.showMessageDialog(null, "Comanda a fost plasata.");
+                }
+            }
+        });
+
+    }
+
+    public void adauga(Connection connection, int idProdus, String nrIdProdus, int idClient){
+        String stmt = "update clienti set " + nrIdProdus + " = ? where id = " + Integer.toString(idClient);
+        try {
+            PreparedStatement prepStmt = connection.prepareStatement(stmt);
+            prepStmt.setInt(1, idProdus);
+            prepStmt.execute();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public double suma(Connection connection, int prod){
+        Statement stmt = null;
+        int count;
+
+        try {
+            stmt = connection.createStatement();
+            String query = "select count(*) from produse";
+            ResultSet rs = stmt.executeQuery(query);
+            rs.next();
+            count = rs.getInt(1);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        try{
+            String categorie = "", marca = "", culoare = "", imagine = "";
+            double pret = 0;
+            int nrComenzi = 0;
+            boolean discount = false;
+            PreparedStatement prep = connection.prepareStatement("select categorie from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            ResultSet rs = prep.executeQuery();
+            if (rs.next()) {
+                categorie = rs.getString("categorie");
+            }
+
+            prep = connection.prepareStatement("select marca from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            rs = prep.executeQuery();
+            if (rs.next()) {
+                marca = rs.getString("marca");
+            }
+
+            prep = connection.prepareStatement("select culoare from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            rs = prep.executeQuery();
+            if (rs.next()) {
+                culoare = rs.getString("culoare");
+            }
+
+            prep = connection.prepareStatement("select imagine from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            rs = prep.executeQuery();
+            if (rs.next()) {
+                imagine = rs.getString("imagine");
+            }
+
+            prep = connection.prepareStatement("select pret from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            rs = prep.executeQuery();
+            if (rs.next()) {
+                pret = rs.getDouble("pret");
+            }
+
+            prep = connection.prepareStatement("select nrComenzi from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            rs = prep.executeQuery();
+            if (rs.next()) {
+                nrComenzi = rs.getInt("nrComenzi");
+            }
+
+            prep = connection.prepareStatement("select discount from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            rs = prep.executeQuery();
+            if (rs.next()) {
+                discount = rs.getBoolean("discount");
+            }
+
+            p = new Produs(prod, categorie, nrComenzi, marca, pret, culoare, imagine);
+            p.setDiscount1(discount);
+        }catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return p.getPret();
+    }
+    public String addToTextArea(Connection connection, int prod){
+        Statement stmt = null;
+        int count;
+
+        try {
+            stmt = connection.createStatement();
+            String query = "select count(*) from produse";
+            ResultSet rs = stmt.executeQuery(query);
+            rs.next();
+            count = rs.getInt(1);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        try{
+            String categorie = "", marca = "", culoare = "", imagine = "";
+            double pret = 0;
+            int nrComenzi = 0;
+            boolean discount = false;
+            PreparedStatement prep = connection.prepareStatement("select categorie from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            ResultSet rs = prep.executeQuery();
+            if (rs.next()) {
+                categorie = rs.getString("categorie");
+            }
+
+            prep = connection.prepareStatement("select marca from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            rs = prep.executeQuery();
+            if (rs.next()) {
+                marca = rs.getString("marca");
+            }
+
+            prep = connection.prepareStatement("select culoare from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            rs = prep.executeQuery();
+            if (rs.next()) {
+                culoare = rs.getString("culoare");
+            }
+
+            prep = connection.prepareStatement("select imagine from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            rs = prep.executeQuery();
+            if (rs.next()) {
+                imagine = rs.getString("imagine");
+            }
+
+            prep = connection.prepareStatement("select pret from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            rs = prep.executeQuery();
+            if (rs.next()) {
+                pret = rs.getDouble("pret");
+            }
+
+            prep = connection.prepareStatement("select nrComenzi from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            rs = prep.executeQuery();
+            if (rs.next()) {
+                nrComenzi = rs.getInt("nrComenzi");
+            }
+
+            prep = connection.prepareStatement("select discount from produse where (idProduse)=(?)");
+            prep.setInt(1, prod);
+            rs = prep.executeQuery();
+            if (rs.next()) {
+                discount = rs.getBoolean("discount");
+            }
+
+            p = new Produs(prod, categorie, nrComenzi, marca, pret, culoare, imagine);
+            p.setDiscount1(discount);
+        }catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return p.toString();
+    }
+}

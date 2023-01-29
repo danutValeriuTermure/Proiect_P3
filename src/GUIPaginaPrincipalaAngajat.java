@@ -4,24 +4,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GUIPaginaPrincipala extends JFrame {
+public class GUIPaginaPrincipalaAngajat extends JFrame {
 
-    private JButton login, register, favorite, cosulMeu;
+    private JButton signout, search;
     private JButton meniuL, meniuTT, meniuP, meniuCM, meniuTAV, meniuG;
-    private JMenuBar meniu;
     private JScrollPane mainContent;
     private JPanel produse;
     private JLabel paginaPrincipala;
     private List<Pereche> butoane;
-    private List<JPanel> panels;
 
-    public GUIPaginaPrincipala(Connection connection){
+    public GUIPaginaPrincipalaAngajat(Connection connection){
         setTitle("Pagina principala");
         setSize(new Dimension(980, 800));
         getContentPane().setBackground(new Color(10, 38, 71));
@@ -47,22 +43,21 @@ public class GUIPaginaPrincipala extends JFrame {
         susDreapta.setBounds(530, 10, 420, 70);
         susDreapta.setBackground(new Color(10, 38, 71));
         susDreapta.setOpaque(true);
-        login = new JButton("Login");
-        login.setForeground(Color.WHITE);
-        login.setFont(new Font("Monaco", Font.BOLD, 15));
-        login.setPreferredSize(new Dimension(100, 30));
-        login.setBackground(new Color(20, 66, 114));
-        login.setOpaque(true);
+        signout = new JButton("Signout");
+        signout.setForeground(Color.WHITE);
+        signout.setFont(new Font("Monaco", Font.BOLD, 15));
+        signout.setPreferredSize(new Dimension(100, 30));
+        signout.setBackground(new Color(20, 66, 114));
+        signout.setOpaque(true);
+        search = new JButton("Search");
+        search.setForeground(Color.WHITE);
+        search.setFont(new Font("Monaco", Font.BOLD, 15));
+        search.setPreferredSize(new Dimension(100, 30));
+        search.setBackground(new Color(20, 66, 114));
+        search.setOpaque(true);
 
-        register = new JButton("Register");
-        register.setForeground(Color.WHITE);
-        register.setFont(new Font("Monaco", Font.BOLD, 15));
-        register.setPreferredSize(new Dimension(100, 30));
-        register.setBackground(new Color(20, 66, 114));
-        register.setOpaque(true);
-
-        susDreapta.add(login);
-        susDreapta.add(register);
+        susDreapta.add(search);
+        susDreapta.add(signout);
         add(susDreapta);
 
         JPanel mijlocSus = new JPanel();
@@ -140,84 +135,22 @@ public class GUIPaginaPrincipala extends JFrame {
 
         addToPanel(connection);
 
-        meniu = new JMenuBar();
-        meniu.setBackground(new Color(10, 38, 71));
-        meniu.setOpaque(true);
-        JMenu file = new JMenu("Extra");
-        file.setForeground(Color.WHITE);
-        meniu.add(file);
-        setJMenuBar(meniu);
-        JMenuItem info = new JMenuItem(new AbstractAction("Admin") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-                dispose();
-                GUILoginAdmin admin = new GUILoginAdmin(connection);
-            }
-        });
-
-        JMenuItem logAngajat = new JMenuItem(new AbstractAction("Login Angajat") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-                dispose();
-                GUILoginAngajat log = new GUILoginAngajat(connection);
-            }
-        });
-
-
-        file.add(info);
-        file.add(logAngajat);
-
-        login.addActionListener(new ActionListener() {
+        signout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
                 setVisible(false);
-                GUILogin loginEvent = new GUILogin(connection);
+                GUIPaginaPrincipala pp = new GUIPaginaPrincipala(connection);
+                pp.setVisible(true);
+                pp.setLocationRelativeTo(null);
+                pp.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             }
         });
-        register.addActionListener(new ActionListener() {
+
+        search.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GUIRegister registerEvent = new GUIRegister(connection);
-            }
-        });
-
-        addWindowListener(new WindowListener() {
-            @Override
-            public void windowOpened(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowIconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeiconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowActivated(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-
+                GUISearchAngajat gui = new GUISearchAngajat(connection);
             }
         });
     }
@@ -237,7 +170,6 @@ public class GUIPaginaPrincipala extends JFrame {
         }
         return count;
     }
-
     public void addToPanel(Connection connection){
         butoane = new ArrayList<>();
         JButton aux;
@@ -308,7 +240,6 @@ public class GUIPaginaPrincipala extends JFrame {
                 temp = new Produs(i, categorie, nrComenzi, marca, pret, culoare, imagine);
                 aux = new JButton(imgButton);
                 aux.setSize(new Dimension(300, 300));
-
                 butoane.add(new Pereche(aux, temp));
             }catch (SQLException ex) {
                 throw new RuntimeException(ex);
@@ -318,6 +249,12 @@ public class GUIPaginaPrincipala extends JFrame {
         for (Pereche p : butoane){
             produse.add(p.getButonImagine());
             p.getButonImagine().setToolTipText(p.getInformatiiButon().toString());
+            p.getButonImagine().addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    GUIReport gr = new GUIReport(connection, p.getInformatiiButon());
+                }
+            });
         }
     }
 }

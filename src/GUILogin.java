@@ -1,18 +1,15 @@
 import LoginRelated.Angajat;
 import LoginRelated.Client;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class GUILogin extends JFrame implements Serializable {
+
+public class GUILogin extends JFrame {
 
     private JLabel titlu, email, parola;
     private JTextField tfEmail;
@@ -20,77 +17,75 @@ public class GUILogin extends JFrame implements Serializable {
     private JButton login;
     private JCheckBox arataParola;
     private List<Client> listaClienti;
-    private List<Angajat> listaAngajati;
 
-    private JCheckBox bAngajat, bClient;
-
-    public GUILogin(File clienti, File angajati){
+    public GUILogin(Connection connection){
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        Container col = getContentPane();
-        col.setBackground(Color.magenta);
-        setTitle("LoginRelated.Login");
+        setTitle("Login");
         setSize(new Dimension(500, 400));
+        getContentPane().setBackground(new Color(10, 38, 71));
         setResizable(false);
         setLocationRelativeTo(null);
         setLayout(null);
 
         titlu = new JLabel("LOGIN");
+        titlu.setBackground(new Color(10, 38, 71));
+        titlu.setOpaque(true);
+        titlu.setForeground(Color.WHITE);
         titlu.setSize(new Dimension(100, 50));
         titlu.setFont(new Font("Monaco", Font.BOLD, 20));
 
         JPanel susStanga = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        susStanga.setBackground(new Color(10, 38, 71));
         susStanga.setSize(new Dimension(120, 70));
         susStanga.setBounds(10, 10, 130, 80);
         susStanga.add(titlu);
         add(susStanga);
 
         email = new JLabel("Email : ");
+        email.setBackground(new Color(10, 38, 71));
+        email.setOpaque(true);
+        email.setForeground(Color.WHITE);
         email.setSize(new Dimension(80, 20));
-        email.setFont(new Font("Monaco", Font.BOLD, 12));
+        email.setFont(new Font("Monaco", Font.BOLD, 15));
         email.setBounds(20, 120, 90, 30);
 
         parola = new JLabel("Parola : ");
+        parola.setBackground(new Color(10, 38, 71));
+        parola.setOpaque(true);
+        parola.setForeground(Color.WHITE);
         parola.setSize(new Dimension(80, 20));
-        parola.setFont(new Font("Monaco", Font.BOLD, 12));
+        parola.setFont(new Font("Monaco", Font.BOLD, 15));
         parola.setBounds(20, 170, 90, 30);
 
         tfEmail = new JTextField();
-        tfEmail.setPreferredSize(new Dimension(200, 20));
+        tfEmail.setPreferredSize(new Dimension(310, 30));
         tfEmail.setFont(new Font("Monaco", Font.BOLD, 12));
-        tfEmail.setBounds(115, 120, 200, 20);
+        tfEmail.setBounds(120, 120, 310, 30);
 
         tfParola = new JPasswordField();
-        tfParola.setEchoChar('*');
-        tfParola.setPreferredSize(new Dimension(200, 20));
+        tfParola.setEchoChar('•');
+        tfParola.setPreferredSize(new Dimension(310, 30));
         tfParola.setFont(new Font("Monaco", Font.BOLD, 12));
-        tfParola.setBounds(115, 170, 200, 20);
+        tfParola.setBounds(120, 170, 310, 30);
 
         login = new JButton("LOGIN");
-        login.setSize(new Dimension(80, 20));
-        login.setFont(new Font("Monaco", Font.BOLD, 12));
-        login.setBounds(70, 250, 80, 20);
+        login.setBackground(new Color (20, 66, 114));
+        login.setOpaque(true);
+        login.setForeground(Color.WHITE);
+        login.setSize(new Dimension(150, 50));
+        login.setFont(new Font("Monaco", Font.BOLD, 17));
+        login.setBounds(120, 250, 150, 50);
 
         arataParola = new JCheckBox("Arata parola");
         arataParola.addActionListener(ae -> {
             JCheckBox c = (JCheckBox) ae.getSource();
             tfParola.setEchoChar(c.isSelected() ? '\u0000' : (Character)          UIManager.get("PasswordField.echoChar"));
         });
-        arataParola.setBounds(70, 190, 100, 50);
-
-        bClient = new JCheckBox("Register LoginRelated.Client");
-        bAngajat = new JCheckBox("Register LoginRelated.Angajat");
-
-        bClient.setSize(new Dimension(180, 20));
-        bClient.setFont(new Font("Monaco", Font.BOLD, 12));
-        bClient.setBounds(40, 50, 180, 20);
-
-        bAngajat.setSize(new Dimension(180, 20));
-        bAngajat.setFont(new Font("Monaco", Font.BOLD, 12));
-        bAngajat.setBounds(40, 80, 180, 20);
-
-        add(bClient);
-        add(bAngajat);
+        arataParola.setBounds(120, 200, 100, 50);
+        arataParola.setBackground(new Color(10, 38, 71));
+        arataParola.setOpaque(true);
+        arataParola.setForeground(Color.WHITE);
 
         add(email);
         add(tfEmail);
@@ -100,161 +95,119 @@ public class GUILogin extends JFrame implements Serializable {
         add(login);
 
         listaClienti = new ArrayList<>();
-        listaAngajati = new ArrayList<>();
 
         login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (bClient.isSelected() && bAngajat.isSelected()){
-                    JOptionPane.showMessageDialog(null, "Selecteaza doar o varianta");
-                }
-                String email = tfEmail.getText();
-                String parola = tfParola.getText();
-
-                if (bClient.isSelected() && !bAngajat.isSelected()) {
-                    String regex = "^(.+)@(.+)$";
-                    Pattern pattern = Pattern.compile(regex);
-
-                    boolean ok = false;
-                    Matcher matcher = pattern.matcher(email);
-                    if (matcher.matches() == false) {
-                        JOptionPane.showMessageDialog(null, "Email incorect");
-                    }else {
-                        ok = true;
-                    }
-                    if (ok == true) {
-                        try {
-                            boolean gasit = false;
-                            String copieEmail = "", copieParola = "";
-                            Scanner myReaderClienti = new Scanner(clienti);
-                            while (myReaderClienti.hasNextLine()) {
-                                String data = myReaderClienti.nextLine();
-                                String[] splited = data.split(" ");
-                                if (splited[0].equals(email)) {
-                                    copieParola = splited[1];
-                                    copieEmail = splited[0];
-                                    gasit = true;
-                                }
-                            }
-
-                            if (gasit == true) {
-                                if (copieParola.equals(parola)) {
-                                    JOptionPane.showMessageDialog(null, "Logat");
-                                } else {
-                                    JOptionPane.showMessageDialog(null, "Parola gresita");
-                                }
-                            } else {
-                                JOptionPane.showMessageDialog(null, "User gresit");
-                            }
-
-                            myReaderClienti.close();
-                        } catch (FileNotFoundException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    }
-                }
-
-                if (bAngajat.isSelected()&& !bClient.isSelected()) {
-                    String regex = "^(.+)@(.+)$";
-                    Pattern pattern = Pattern.compile(regex);
-
-                    boolean ok = false;
-                    Matcher matcher = pattern.matcher(email);
-                    if (matcher.matches() == false) {
-                        JOptionPane.showMessageDialog(null, "Email incorect");
-                    }else {
-                        ok = true;
-                    }
-                    if (ok == true) {
-                        try {
-                            boolean gasit = false;
-                            String copieEmail = "", copieParola = "";
-                            Scanner myReaderAngajati = new Scanner(angajati);
-                            while (myReaderAngajati.hasNextLine()) {
-                                String data = myReaderAngajati.nextLine();
-                                String[] splited = data.split(" ");
-                                if (splited[0].equals(email)) {
-                                    copieParola = splited[1];
-                                    copieEmail = splited[0];
-                                    gasit = true;
-                                }
-                            }
-
-                            if (gasit == true) {
-                                if (copieParola.equals(parola)) {
-                                    JOptionPane.showMessageDialog(null, "Logat");
-                                } else {
-                                    JOptionPane.showMessageDialog(null, "Parola gresita");
-                                }
-                            } else {
-                                JOptionPane.showMessageDialog(null, "User gresit");
-                            }
-
-                            myReaderAngajati.close();
-                        } catch (FileNotFoundException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    }
-                }
-                /**
-                try {
-                    if (clienti.exists())
-                        DeserializareClienti(clienti);
-                    if (angajati.exists())
-                        DeserializareAngajati(angajati);
-                }
-                catch(IOException|ClassNotFoundException|ClassCastException ex){
-                    ex.printStackTrace();
-                }
-
 
                 String email = tfEmail.getText();
                 String parola = tfParola.getText();
+                addaugaListaClienti(connection);
+                Client clientLogat = null;
 
-                boolean okParola = true, okUser = true;
-                for (LoginRelated.Angajat a : listaAngajati){
-                    if (a.getEmail() == email){
-                        if (a.getParola() == parola) {
-                            JOptionPane.showMessageDialog(null, "Logat");
+
+                boolean ok = false;
+                for (Client a : listaClienti){
+                    if (a.getEmail().equals(email)){
+                        if (a.getParola().equals(parola)){
+                            clientLogat = a;
+                            ok = true;
                         }
                     }
                 }
-
-                for (LoginRelated.Client c : listaClienti){
-                    if (c.getEmail() == email){
-                        if (c.getParola() == parola) {
-                            JOptionPane.showMessageDialog(null, "Logat");
-                        }
-                    }
+                if (ok == true){
+                    dispose();
+                    setVisible(false);
+                    JOptionPane.showMessageDialog(null, "Logat");
+                    GUIPaginaPrincipalaClient pp = new GUIPaginaPrincipalaClient(connection, clientLogat);
+                    pp.setVisible(true);
+                    pp.setLocationRelativeTo(null);
+                    pp.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                }else{
+                    JOptionPane.showMessageDialog(null, "Introdu datele corecte.");
                 }
-                 */
+
             }
         });
     }
-    /**
-    public void DeserializareClienti(File f) throws IOException, ClassNotFoundException{
-        System.out.println("1");
-        FileInputStream fis = new FileInputStream(f);
-        System.out.println("2");
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        System.out.println("3");
-        List<Object> temp = (List<Object>) ois.readObject();
-        System.out.println("4");
-        ois.close();
-        fis.close();
-        for (Object o : temp){
-            listaClienti.add((LoginRelated.Client) o);
+
+    public void addaugaListaClienti(Connection connection){
+        Statement stmt = null;
+        int count;
+
+        try {
+            stmt = connection.createStatement();
+            String query = "select count(*) from clienti";
+            ResultSet rs = stmt.executeQuery(query);
+            rs.next();
+            count = rs.getInt(1);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        listaClienti = new ArrayList<>();
+
+        for (int i = 1; i <= count; i++){
+            try{
+                String nume = "", prenume = "", email = "", parola = "";
+                int p1 = 0, p2 = 0, p3 = 0;
+                PreparedStatement prep = connection.prepareStatement("select nume from clienti where (id)=(?)");
+                prep.setInt(1, i);
+                ResultSet rs = prep.executeQuery();
+                if (rs.next()) {
+                    nume = rs.getString("nume");
+                }
+
+                prep = connection.prepareStatement("select prenume from clienti where (id)=(?)");
+                prep.setInt(1, i);
+                rs = prep.executeQuery();
+                if (rs.next()) {
+                    prenume = rs.getString("prenume");
+                }
+
+                prep = connection.prepareStatement("select email from clienti where (id)=(?)");
+                prep.setInt(1, i);
+                rs = prep.executeQuery();
+                if (rs.next()) {
+                    email = rs.getString("email");
+                }
+
+                prep = connection.prepareStatement("select parola from clienti where (id)=(?)");
+                prep.setInt(1, i);
+                rs = prep.executeQuery();
+                if (rs.next()) {
+                    parola = rs.getString("parola");
+                }
+
+                prep = connection.prepareStatement("select idProdus1 from clienti where (id)=(?)");
+                prep.setInt(1, i);
+                rs = prep.executeQuery();
+                if (rs.next()) {
+                    p1 = rs.getInt("idProdus1");
+                }
+
+                prep = connection.prepareStatement("select idProdus2 from clienti where (id)=(?)");
+                prep.setInt(1, i);
+                rs = prep.executeQuery();
+                if (rs.next()) {
+                    p2 = rs.getInt("idProdus2");
+                }
+
+                prep = connection.prepareStatement("select idProdus3 from clienti where (id)=(?)");
+                prep.setInt(1, i);
+                rs = prep.executeQuery();
+                if (rs.next()) {
+                    p3 = rs.getInt("idProdus3");
+                }
+
+                Client c = new Client(i, nume, prenume, email, parola);
+                c.setP1(p1);
+                c.setP2(p2);
+                c.setP3(p3);
+                this.listaClienti.add(c);
+            }catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
-
-    public void DeserializareAngajati(File f) throws IOException, ClassNotFoundException{
-        FileInputStream fis = new FileInputStream(f);
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        java.util.List<Object> temp = (List<Object>) ois.readObject();
-        ois.close();
-        fis.close();
-        for (Object o : temp){
-            listaAngajati.add((LoginRelated.Angajat) o);
-        }
-    }*/
 }
